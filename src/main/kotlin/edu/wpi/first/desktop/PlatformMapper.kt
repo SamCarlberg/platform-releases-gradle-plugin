@@ -25,7 +25,7 @@ val buildPlatform: Platform by lazy {
 }
 
 /**
- * Generates a classifier string for a platform-specific WPILib native library.
+ * Generates a classifier string for a platform-specific WPILib artifact.
  */
 fun wpilibClassifier(platform: Platform) = when (platform) {
     WIN32 -> "windowsx86"
@@ -35,7 +35,7 @@ fun wpilibClassifier(platform: Platform) = when (platform) {
 }
 
 /**
- * Generates a classifier string for a platform-specific JavaCPP native library.
+ * Generates a classifier string for a platform-specific JavaCPP artifact.
  */
 fun javaCppClassifier(platform: Platform) = when (platform) {
     WIN32 -> "windows-x86"

@@ -34,7 +34,7 @@ class PlatformReleasesPlugin : Plugin<Project> {
 
             createPlatformConfigurations()
 
-            val nativeShadowJars = Platform.platforms.map { platform ->
+            val platformShadowJars = Platform.platforms.map { platform ->
                 tasks.register("shadowJar-${platform.platformName}", ShadowJar::class.java) {
                     group = "Shadow"
                     description = "Generates a platform-specific shadow jar for ${platform.platformName}"
@@ -51,7 +51,7 @@ class PlatformReleasesPlugin : Plugin<Project> {
             tasks.register("shadowJarAllPlatforms") {
                 group = "Shadow"
                 description = "Generates all platform-specific shadow jars at once."
-                nativeShadowJars.forEach {
+                platformShadowJars.forEach {
                     dependsOn(it)
                 }
             }

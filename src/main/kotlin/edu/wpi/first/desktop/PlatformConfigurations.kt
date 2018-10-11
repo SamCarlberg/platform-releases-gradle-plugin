@@ -12,7 +12,7 @@ fun DependencyHandler.add(platform: Platform, dependencyNotation: Any) = add(pla
 /**
  * Creates a [Configuration] for the given platform.  If the given platform is also the current platform (i.e. the
  * operating system running the Gradle build), then the `compileOnly`, `runtimeOnly`, and `testCompile` configurations
- * will extend from the native configuration for purposes of being able to run the application and tests.
+ * will extend from the current platform configuration for purposes of being able to run the application and tests.
  */
 internal fun Project.platformConfig(platform: Platform): Configuration {
     val configuration = configurations.create(platform.platformName)
@@ -25,7 +25,7 @@ internal fun Project.platformConfig(platform: Platform): Configuration {
 }
 
 /**
- * Creates all the native configurations for the project.
+ * Creates all the platform-specific configurations for the project.
  */
 fun Project.createPlatformConfigurations() = forEachPlatform { platform -> platformConfig(platform) }
 
@@ -45,8 +45,8 @@ fun DependencyHandler.platform(group: String, name: String, version: String, cla
 }
 
 /**
- * Adds a dependency on a project that has dependencies on platform-specific libraries. The native dependencies for the
- * project will be added to the same platform dependency configuration for this project.  The project's `compile`
+ * Adds a dependency on a project that has dependencies on platform-specific libraries. The platform dependencies for
+ * the project will be added to the same platform dependency configuration for this project.  The project's `compile`
  * configuration will also be copied to this project's.  Additionally, the project's platform-specific dependencies
  * corresponding to the build platform project will be added to this project's `compileOnly`, `runtime`, and
  * `testCompile` configurations to allow the app's `run` task and all projects' test suites to be able to compile and
@@ -54,13 +54,13 @@ fun DependencyHandler.platform(group: String, name: String, version: String, cla
  *
  * @param path the path to the project
  */
-fun DependencyHandler.nativeProject(path: String) {
+fun DependencyHandler.platformProject(path: String) {
     forEachPlatform {
-        nativeProject(path, it)
+        platformProject(path, it)
     }
 }
 
-internal fun DependencyHandler.nativeProject(path: String, platform: Platform) {
+internal fun DependencyHandler.platformProject(path: String, platform: Platform) {
     add(platform, project(path, platform.platformName))
     add("compile", project(path, "compile"))
     if (platform == buildPlatform) {
@@ -71,7 +71,7 @@ internal fun DependencyHandler.nativeProject(path: String, platform: Platform) {
 }
 
 /**
- * Performs some action for all supported native platforms.
+ * Performs some action for all supported platforms.
  */
 fun forEachPlatform(action: (Platform) -> Unit) {
     Platform.platforms.forEach(action)

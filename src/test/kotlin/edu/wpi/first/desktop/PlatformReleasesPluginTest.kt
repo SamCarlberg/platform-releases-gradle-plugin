@@ -1,6 +1,6 @@
 package edu.wpi.first.desktop
 
-import nativeProject
+import platformProject
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.plugins.ApplicationPlugin
@@ -44,12 +44,12 @@ class PlatformReleasesPluginTest {
     }
 
     @Test
-    fun `Native project dependencies`() {
+    fun `Platform-specific project dependencies`() {
         val rootProject = makeProject("root")
         val subProject = makeProject("sub", rootProject)
 
         rootProject.dependencies {
-            nativeProject(":sub")
+            platformProject(":sub")
         }
 
         assertAll(Platform.platforms.stream()
