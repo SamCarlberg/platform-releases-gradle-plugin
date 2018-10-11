@@ -4,6 +4,7 @@ plugins {
     `java`
     `java-gradle-plugin`
     `kotlin-dsl`
+    // Makes sure to update the kotlin version below in the test resources as well.
     kotlin("jvm") version "1.2.51"
     `maven-publish`
     id ("com.gradle.plugin-publish") version "0.9.10"
@@ -31,7 +32,24 @@ dependencies {
     testCompile(junitJupiter(name = "junit-jupiter-api"))
     testCompile(junitJupiter(name = "junit-jupiter-engine"))
     testCompile(junitJupiter(name = "junit-jupiter-params"))
+    testCompile(group = "org.junit-pioneer", name = "junit-pioneer", version = "0.2.2")
     testRuntime(create(group = "org.junit.platform", name = "junit-platform-launcher", version = "1.0.0"))
+}
+
+publishing {
+    repositories {
+        // Work around Gradle TestKit limitations in order to allow for compileOnly dependencies
+        maven {
+            name = "test"
+            url = uri("$buildDir/plugin-test-repository")
+        }
+    }
+
+    publications {
+        create<MavenPublication>("mavenJar") {
+            from(components.getByName("java"))
+        }
+    }
 }
 
 
@@ -49,10 +67,10 @@ tasks.withType<Test> {
 
 gradlePlugin {
     plugins {
-        create("PlatformReleases") {
-            id = "edu.wpi.first.desktop.PlatformReleases"
+        register("PlatformReleases") {
+            id = "edu.wpi.first.desktop.platform-releases"
             displayName = "Platform releases"
-            implementationClass = "edu.wpi.first.desktop.PlatformReleasesPlugin"
+            implementationClass = "edu.wpi.first.desktop.jlink.JLinkPlugin"
             description = "A Gradle plugin for handling platform-specific dependencies and releases."
         }
     }
@@ -69,8 +87,22 @@ pluginBundle {
         create("PlatformReleases") {
             id = plugin.id
             displayName = plugin.displayName
-            version = project.version.toString()
-            description = plugin.description
         }
+    }
+}
+
+tasks {
+    val publishPluginsToTestRepository by creating {
+        dependsOn("publishPluginMavenPublicationToTestRepository")
+    }
+    val processTestResources: ProcessResources by getting
+    val writeTestProperties by creating(WriteProperties::class) {
+        outputFile = processTestResources.destinationDir.resolve("test.properties")
+        property("version", version)
+        property("kotlinVersion", "1.2.51")
+    }
+    processTestResources.dependsOn(writeTestProperties)
+    "test" {
+        dependsOn(publishPluginsToTestRepository)
     }
 }
