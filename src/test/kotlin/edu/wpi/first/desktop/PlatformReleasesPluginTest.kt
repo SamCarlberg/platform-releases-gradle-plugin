@@ -35,15 +35,6 @@ class PlatformReleasesPluginTest {
     }
 
     @Test
-    fun `jlink tasks should exist if the application plugin is applied`() {
-        val project = makeProject()
-        project.applyApplicationPlugin()
-
-        project.tasks.getByName(PlatformReleasesPlugin.JLINK_TASK_NAME)
-        project.tasks.getByName(PlatformReleasesPlugin.JLINK_ZIP_TASK_NAME)
-    }
-
-    @Test
     fun `Platform-specific project dependencies`() {
         val rootProject = makeProject("root")
         val subProject = makeProject("sub", rootProject)

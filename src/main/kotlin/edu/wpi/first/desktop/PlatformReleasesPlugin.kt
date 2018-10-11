@@ -3,6 +3,7 @@ package edu.wpi.first.desktop
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import createPlatformConfigurations
+import edu.wpi.first.desktop.jlink.JLinkTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.ApplicationPlugin
@@ -61,9 +62,6 @@ class PlatformReleasesPlugin : Plugin<Project> {
                 tasks.register(JLINK_TASK_NAME, JLinkTask::class.java) {
                     group = "Distribution"
                     description = "Generates a native Java runtime image"
-                    options {
-                        shadowTask = tasks.getByName("shadowJar", ShadowJar::class)
-                    }
                 }
                 tasks.register(JLINK_ZIP_TASK_NAME, Zip::class.java) {
                     group = "Distribution"
