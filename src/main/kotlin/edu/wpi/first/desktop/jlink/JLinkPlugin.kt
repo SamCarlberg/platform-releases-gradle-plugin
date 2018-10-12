@@ -2,25 +2,19 @@ package edu.wpi.first.desktop.jlink
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.create
 
-class JLinkPlugin : Plugin<Project> {
+open class JLinkPlugin : Plugin<Project> {
 
     companion object {
         const val EXTENSION_NAME = "jlink"
         const val JLINK_TASK_GROUP = "JLink"
-        const val JLINK_TASK_NAME = "jlink"
+        const val JLINK_TASK_NAME = "jlinkGenerate"
         const val JLINK_ZIP_TASK_NAME = "jlinkZip"
     }
 
     override fun apply(project: Project) {
-        println("Applying jlink plugin to $project")
-        val container = project.container(JLinkOptions::class.java) { name ->
-            require(name.isNotBlank()) {
-                "Name of ${JLinkOptions::class.simpleName} must be specified"
-            }
-            JLinkOptions(name = name)
-        }
-        project.extensions.add(EXTENSION_NAME, container)
+        val extension = project.extensions.create(EXTENSION_NAME, JLinkExtension::class, project)
 
         val jlinkTask = project.tasks.register(JLINK_TASK_NAME) {
             group = JLINK_TASK_GROUP
