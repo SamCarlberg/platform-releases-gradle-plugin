@@ -13,8 +13,6 @@ plugins {
 group = "edu.wpi.first.desktop"
 version = "0.1.0"
 
-println(project.properties["pubVersion"])
-
 repositories {
     mavenCentral()
     gradlePluginPortal()
@@ -70,7 +68,7 @@ gradlePlugin {
         register("PlatformReleases") {
             id = "edu.wpi.first.desktop.platform-releases"
             displayName = "Platform releases"
-            implementationClass = "edu.wpi.first.desktop.jlink.JLinkPlugin"
+            implementationClass = "edu.wpi.first.desktop.PlatformReleasesPlugin"
             description = "A Gradle plugin for handling platform-specific dependencies and releases."
         }
     }
